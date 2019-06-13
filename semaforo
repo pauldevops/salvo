@@ -1,0 +1,48 @@
+int ssr[]={2,3,4};         // Arduino pin numbers used for SSR
+int triggerType = HIGH;    // type LOW if low trigger and HIGH if high trigger SSR is used
+int wait = 2000;           // delay time
+
+int ssrON, ssrOFF;         // used for two different SSR trigger type. Do not change
+
+void setup(){
+	Serial.begin(9600);      // prepare Serial monitor
+	// set  pins as output
+	if(triggerType){
+		ssrON = HIGH;
+		ssrOFF = LOW;
+	}else{
+		ssrON = LOW;
+		ssrOFF = HIGH; 
+	}
+	for(int i=0; i < 4; i++){    
+		pinMode(ssr[i], OUTPUT);      // sent i(th) pin as output
+		digitalWrite(ssr[i], ssrOFF); // Turn the SSR OFF  
+	}          
+	Serial.println("Semaforo di Salvo");
+}
+
+void loop(){
+	contrlSSR(1, ssrON, 5000);
+	contrlSSR(1, ssrOFF, 0);
+	contrlSSR(3, ssrON, 5000);
+	contrlSSR(2, ssrON, 1500);
+	contrlSSR(3, ssrOFF, 0);
+	contrlSSR(2, ssrOFF, 0);
+	Serial.println("== loop done ==");
+}// loop
+
+void contrlSSR(int number, int control, int wait){
+	if(control == HIGH){
+		Serial.print("SSR ");
+		Serial.print(number);
+		Serial.println(" ON");
+		digitalWrite(ssr[number-1], ssrON);		// Turn the SSR ON    
+		delay(wait); 
+	}else{
+		Serial.print("SSR ");
+		Serial.print(number);
+		Serial.println(" OFF");
+		digitalWrite(ssr[number-1], ssrOFF);	// Turn the SSR OFF    
+		delay(wait);     
+  }
+}
